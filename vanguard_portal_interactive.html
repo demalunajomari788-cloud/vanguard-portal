@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vanguard Elite Security Portal</title>
+
+<style>
+/* Base */
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+body {
+    background: linear-gradient(270deg,#0a0a0a,#1a1a1a,#0a0a0a);
+    background-size:800% 800%;
+    animation: gradientBG 20s ease infinite;
+    color:#FFD700;
+    overflow-x:hidden;
+}
+@keyframes gradientBG {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+/* Navigation / surface buttons */
+nav {
+    position:sticky;
+    top:0;
+    background:#111;
+    padding:15px;
+    text-align:center;
+    z-index:100;
+}
+nav button {
+    margin:6px;
+    padding:12px 22px;
+    background:#DAA520;
+    color:black;
+    border:none;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+}
+nav button:hover { opacity:0.8; }
+
+/* Sections hidden by default */
+section { display:none; padding:30px; text-align:center; }
+
+/* Buttons & inputs */
+button.main-btn { padding:10px 20px; background:#FFD700; color:black; border:none; border-radius:6px; cursor:pointer; font-weight:bold; margin:6px;}
+input,textarea { width:90%; padding:10px; margin:8px 0; border-radius:6px; border:none; }
+textarea{resize:none;}
+.dashboard ul { text-align:left; padding-left:20px;}
+li.clickable { cursor:pointer; margin:8px 0; padding:6px; border-bottom:1px solid #444;}
+li.clickable:hover { color:#38bdf8;}
+.popup { background:rgba(0,0,0,0.95); border:2px solid #FFD700; border-radius:10px; padding:18px; margin-top:15px; display:none;}
+.address-list{text-align:left; padding-left:20px; font-size:14px;}
+footer { margin-top:30px; padding:20px; background:#111; color:#FFD700; text-align:center;}
+</style>
+</head>
+<body>
+
+<!-- Background music -->
+<audio id="bg-music" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2021/09/14/audio_12345678.mp3?filename=mission-impossible-style-112.mp3" type="audio/mpeg">
+</audio>
+<button onclick="toggleMusic()" style="position:fixed; bottom:20px; right:20px; padding:10px 15px; border:none; border-radius:6px; background:#FFD700; color:black; cursor:pointer;">Play / Pause Music</button>
+
+<!-- Navigation / surface buttons -->
+<nav>
+    <button onclick="showSection('agent-section')">AGENT</button>
+    <button onclick="showSection('civilian-section')">CIVILIAN</button>
+    <button onclick="showSection('service-section')">SERVICE COVERAGE</button>
+    <button onclick="showSection('helpdesk-section')">HELP DESK</button>
+    <button onclick="showSection('learn-section')">LEARN MORE</button>
+    <button onclick="showSection('contact-section')">CONTACT</button>
+</nav>
+
+<!-- AGENT -->
+<section id="agent-section">
+    <h1>Agent Login</h1>
+    <input type="text" id="agent-username" placeholder="Username"><br>
+    <input type="text" id="agent-code" placeholder="Message Code / Gmail"><br>
+    <button class="main-btn" onclick="agentLogin()">Login</button>
+
+    <!-- Dashboard hidden by default -->
+    <div id="agent-dashboard" class="dashboard" style="display:none;">
+        <h2>Mission Dashboard</h2>
+        <ul>
+            <li class="clickable" onclick="showMission('Alpha')">Mission Alpha</li>
+            <li class="clickable" onclick="showMission('Bravo')">Mission Bravo</li>
+            <li class="clickable" onclick="showMission('Charlie')">Mission Charlie</li>
+            <li class="clickable" onclick="showMission('Delta')">Mission Delta</li>
+        </ul>
+        <div id="mission-popup" class="popup"></div>
+
+        <h2>Organization Chart</h2>
+        <ul>
+            <li>CEO: Bobong Marcos</li>
+            <li>Chief Executive: Lenlen</li>
+            <li>Middle East – Jomari Demaluna – Intelligence Commander III</li>
+            <li>Philippines – Lorenz Cells – Intelligence Commander I</li>
+            <li>Indonesia – Wendirick Belardo – Intelligence Commander I</li>
+            <li>North Korea – Sofia Nericka Rojo – Intelligence Commander I</li>
+            <li>Zimbabwe – Rose Ann Hilotin – Intelligence Commander I</li>
+            <li>Mexico – Elmanuel Oida – Intelligence Commander I</li>
+            <li>Singapore – Shiela Villanueva – Intelligence Commander I</li>
+        </ul>
+        <button class="main-btn" onclick="logoutAgent()">Logout</button>
+    </div>
+</section>
+
+<!-- CIVILIAN -->
+<section id="civilian-section">
+    <h1>Civilian Assistance</h1>
+    <p>Click a region to see officer & address:</p>
+    <div>
+        <button class="main-btn" onclick="showRegion('Middle East')">Middle East</button>
+        <button class="main-btn" onclick="showRegion('Philippines')">Philippines</button>
+        <button class="main-btn" onclick="showRegion('Indonesia')">Indonesia</button>
+        <button class="main-btn" onclick="showRegion('Japan')">Japan</button>
+        <button class="main-btn" onclick="showRegion('China')">China</button>
+        <button class="main-btn" onclick="showRegion('Singapore')">Singapore</button>
+        <button class="main-btn" onclick="showRegion('US')">US</button>
+        <button class="main-btn" onclick="showRegion('Mexico')">Mexico</button>
+        <button class="main-btn" onclick="showRegion('North Korea')">North Korea</button>
+        <button class="main-btn" onclick="showRegion('Zimbabwe')">Zimbabwe</button>
+    </div>
+    <div id="region-popup" class="popup"></div>
+</section>
+
+<!-- SERVICE COVERAGE -->
+<section id="service-section">
+    <h1>Service Coverage</h1>
+    <p>Click a region to see branch addresses:</p>
+    <div>
+        <button class="main-btn" onclick="showCoverage('Middle East')">Middle East</button>
+        <button class="main-btn" onclick="showCoverage('Philippines')">Philippines</button>
+        <button class="main-btn" onclick="showCoverage('Indonesia')">Indonesia</button>
+        <button class="main-btn" onclick="showCoverage('Japan')">Japan</button>
+        <button class="main-btn" onclick="showCoverage('China')">China</button>
+        <button class="main-btn" onclick="showCoverage('Singapore')">Singapore</button>
+        <button class="main-btn" onclick="showCoverage('US')">US</button>
+        <button class="main-btn" onclick="showCoverage('Mexico')">Mexico</button>
+        <button class="main-btn" onclick="showCoverage('North Korea')">North Korea</button>
+        <button class="main-btn" onclick="showCoverage('Zimbabwe')">Zimbabwe</button>
+    </div>
+    <div id="coverage-popup" class="popup"></div>
+</section>
+
+<!-- HELP DESK -->
+<section id="helpdesk-section">
+    <h1>Help Desk</h1>
+    <input type="text" id="help-name" placeholder="Your Name"><br>
+    <input type="email" id="help-email" placeholder="Your Email"><br>
+    <textarea id="help-message" rows="5" placeholder="Your concern / complaint"></textarea><br>
+    <button class="main-btn" onclick="submitHelp()">Submit Message</button>
+</section>
+
+<!-- LEARN MORE -->
+<section id="learn-section">
+    <h1>Learn More About Vanguard</h1>
+    <button class="main-btn" onclick="showLearn('Mission')">Mission & Vision</button>
+    <button class="main-btn" onclick="showLearn('History')">History</button>
+    <button class="main-btn" onclick="showLearn('Services')">Services</button>
+    <button class="main-btn" onclick="showLearn('Values')">Core Values</button>
+    <div id="learn-popup" class="popup"></div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact-section">
+    <footer>
+        <h2>Contact Vanguard Elite Security</h2>
+        <p>Email: contact@vanguardelite.com</p>
+        <p>Gmail: demalunajomari16@gmail.com</p>
+        <p>Phone: +1‑800‑555‑0199</p>
+        <p>Address: 123 Elite Security Blvd, Global City</p>
+    </footer>
+</section>
+
+<script>
+// show/hide section
+function showSection(id){
+    document.querySelectorAll('section').forEach(sec=>sec.style.display='none');
+    document.getElementById(id).style.display='block';
+}
+
+// toggle background music
+function toggleMusic(){
+    const music=document.getElementById('bg-music');
+    if(music.paused) music.play(); else music.pause();
+}
+
+// voice welcome
+function playWelcome(){
+    const msg=new SpeechSynthesisUtterance("Welcome to Vanguard Elite Security Portal, Agent.");
+    window.speechSynthesis.speak(msg);
+}
+
+// Agent login/logout
+function agentLogin(){
+    const user=document.getElementById('agent-username').value;
+    const code=document.getElementById('agent-code').value;
+    const dashboard=document.getElementById('agent-dashboard');
+    if(user && code){
+        dashboard.style.display='block';
+        playWelcome();
+        alert("Login Successful!");
+    } else {
+        dashboard.style.display='none';
+        alert("Please enter both username and message code.");
+    }
+}
+function logoutAgent(){
+    const dashboard=document.getElementById('agent-dashboard');
+    dashboard.style.display='none';
+    document.getElementById('agent-username').value='';
+    document.getElementById('agent-code').value='';
+}
+
+// missions
+function showMission(m){
+    const data={
+        "Alpha":"Secure VIP convoy. Follow security SOP at all times.",
+        "Bravo":"Cyber intercept operation. Use encrypted channels.",
+        "Charlie":"Urban field recon. Gather intel & report promptly.",
+        "Delta":"Emergency incident response. Coordinate with HQ."
+    };
+    const p=document.getElementById('mission-popup');
+    p.innerHTML=`<strong>${m}</strong><br>${data[m]}`;
+    p.style.display="block";
+}
+
+// civilian region
+function showRegion(r){
+    const info={
+        "Middle East":"Officer: Jomari Demaluna<br>Address: Sheikh Zayed Road, Trade Centre, Dubai",
+        "Philippines":"Officer: Lorenz Cells<br>Address: 5th Ave Cor 11th St, BGC, Taguig",
+        "Indonesia":"Officer: Wendirick Belardo<br>Address: Jl. Thamrin No.88, Jakarta",
+        "Japan":"Officer: Takahiro Sato<br>Address: 2‑1 Ginza, Chuo City, Tokyo",
+        "China":"Officer: Li Wei<br>Address: East Nanjing Rd, Shanghai",
+        "Singapore":"Officer: Shiela Villanueva<br>Address: Orchard Rd, Singapore",
+        "US":"Officer: John Smith<br>Address: 350 Fifth Ave, New York",
+        "Mexico":"Officer: Elmanuel Oida<br>Address: Av. Juarez 55, Mexico City",
+        "North Korea":"Officer: Sofia Nericka Rojo<br>Address: Mansudae St, Pyongyang",
+        "Zimbabwe":"Officer: Rose Ann Hilotin<br>Address: Samora Machel Ave, Harare"
+    };
+    const p=document.getElementById('region-popup');
+    p.innerHTML=`<strong>${r} Branch</strong><br>${info[r]}`;
+    p.style.display="block";
+}
+
+// service coverage
+function showCoverage(region){
+    const branches={
+        "Philippines":["Fort BGC, Taguig","Quezon Ave, Quezon City","Mabini St, Ermita, Manila","Abreeza, Davao City","La Union Blvd, San Fernando"],
+        "US":["350 Fifth Ave, NYC","S Sunset Blvd, LA","Michigan Ave, Chicago","Peachtree St, Atlanta","Market St, San Francisco"],
+        "Singapore":["Orchard Rd","Marina Bay Sands","Raffles Place","Changi Business Park","Tampines Ave"],
+        "Japan":["Shibuya Crossing, Tokyo","Umeda, Osaka","Sapporo Station","Hakata, Fukuoka","Kyoto Central"],
+        "China":["East Nanjing Rd, Shanghai","Tiananmen, Beijing","Guangzhou Ave, Guangzhou","Shenzhen CBD","Chengdu Hi-Tech"],
+        "Indonesia":["Jl. Thamrin, Jakarta","Bali Kuta","Jl. Sudirman, Bandung","Surabaya Central","Medan Polonia"],
+        "Middle East":["Sheikh Zayed Rd, Dubai","King Fahd Rd, Riyadh","Corniche, Abu Dhabi","Salwa Rd, Doha","Al Khobar St"],
+        "Mexico":["Av. Juarez, Mexico City","Paseo Montejo, Merida","Av. Insurgentes, Cancun","Av. Universidad, Puebla","Av. Revolucion, Guadalajara"],
+        "North Korea":["Pyongyang Central"],
+        "Zimbabwe":["Harare CBD","Bulawayo Main"]
+    };
+    const list=branches[region]||[];
+    let html=`<strong>Branches in ${region}</strong><div class='address-list'>`;
+    list.forEach(a=>html+=a+"<br>");
+    html+="</div>";
+    const p=document.getElementById('coverage-popup');
+    p.innerHTML=html;
+    p.style.display="block";
+}
+
+// help desk
+function submitHelp(){
+    const name=document.getElementById('help-name').value;
+    const email=document.getElementById('help-email').value;
+    const msg=document.getElementById('help-message').value;
+    if(name && email && msg){
+        window.location.href=`mailto:demalunajomari16@gmail.com?subject=Help Desk from ${name}&body=Name:${name}%0AEmail:${email}%0AMessage:${msg}`;
+    } else alert("Fill all fields.");
+}
+
+// Learn more
+function showLearn(topic){
+    const info={
+        "Mission":"Vanguard Elite Security provides strategic global protection and intelligence services with integrity and precision.",
+        "History":"Founded in 2010, Vanguard expanded across multiple continents with a network of elite operatives, advanced tech, and unwavering commitment to safety.",
+        "Services":"Services include VIP protection, risk assessment, investigation, cyber surveillance, and emergency response tailored to client needs.",
+        "Values":"Integrity, vigilance, discretion, innovation, and excellence guide every action and operation at Vanguard Elite Security."
+    };
+    const p=document.getElementById('learn-popup');
+    p.innerHTML=`<strong>${topic}</strong><br>${info[topic]}`;
+    p.style.display="block";
+}
+</script>
+
+</body>
+</html>
